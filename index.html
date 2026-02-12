@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estatísticas — Campeonato Sergipano 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-primary:#0a0e17;--bg-secondary:#111827;--bg-card:#1a2236;--bg-card-hover:#1e2a42;--accent-green:#22c55e;--accent-green-dim:rgba(34,197,94,0.15);--accent-gold:#f59e0b;--accent-gold-dim:rgba(245,158,11,0.12);--accent-blue:#3b82f6;--accent-blue-dim:rgba(59,130,246,0.12);--accent-red:#ef4444;--accent-red-dim:rgba(239,68,68,0.1);--text-primary:#f1f5f9;--text-secondary:#94a3b8;--text-muted:#64748b;--border:rgba(255,255,255,0.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 20% 20%,rgba(34,197,94,0.04) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(59,130,246,0.03) 0%,transparent 50%);z-index:0;pointer-events:none}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");z-index:0;pointer-events:none}
+.container{max-width:1280px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+header{padding:40px 0 20px;text-align:center}
+.header-badge{display:inline-flex;align-items:center;gap:8px;background:var(--accent-green-dim);border:1px solid rgba(34,197,94,0.2);padding:6px 16px;border-radius:100px;font-size:12px;font-weight:600;color:var(--accent-green);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px;font-family:'Space Mono',monospace}
+.header-badge .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent-green);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:900;letter-spacing:-1.5px;line-height:1.1;margin-bottom:8px}
+h1 .highlight{background:linear-gradient(135deg,var(--accent-green),#4ade80);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{color:var(--text-secondary);font-size:1rem;font-weight:400;max-width:500px;margin:0 auto}
+.disclaimer{margin:24px auto;max-width:800px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:12px;padding:14px 20px;display:flex;align-items:flex-start;gap:12px;font-size:13px;color:var(--text-secondary);line-height:1.5}
+.disclaimer svg{flex-shrink:0;margin-top:2px}
+.tabs-container{display:flex;justify-content:center;gap:4px;margin:32px auto 28px;background:var(--bg-secondary);border-radius:16px;padding:5px;max-width:720px;border:1px solid var(--border)}
+.tab-btn{flex:1;padding:12px 16px;border:none;background:transparent;color:var(--text-muted);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border-radius:12px;transition:all 0.3s ease;white-space:nowrap}
+.tab-btn:hover{color:var(--text-secondary)}
+.tab-btn.active{background:var(--bg-card);color:var(--text-primary);box-shadow:0 2px 12px rgba(0,0,0,0.3)}
+.section{display:none;animation:fadeIn 0.4s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0}
+.stat-card.green::before{background:var(--accent-green)}.stat-card.gold::before{background:var(--accent-gold)}.stat-card.blue::before{background:var(--accent-blue)}.stat-card.red::before{background:var(--accent-red)}
+.stat-card .label{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;font-family:'Space Mono',monospace}
+.stat-card .value{font-size:2rem;font-weight:800;margin-top:4px}
+.stat-card.green .value{color:var(--accent-green)}.stat-card.gold .value{color:var(--accent-gold)}.stat-card.blue .value{color:var(--accent-blue)}.stat-card.red .value{color:var(--accent-red)}
+.stat-card .detail{font-size:13px;color:var(--text-secondary);margin-top:4px}
+.table-wrapper{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:24px}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;flex-wrap:wrap;gap:12px}
+.table-title{font-size:18px;font-weight:700}
+.search-box{background:var(--bg-primary);border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:var(--text-primary);font-family:'Outfit',sans-serif;font-size:14px;width:220px;outline:none;transition:border-color 0.3s}
+.search-box:focus{border-color:var(--accent-green)}.search-box::placeholder{color:var(--text-muted)}
+table{width:100%;border-collapse:collapse}
+thead th{padding:12px 16px;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;text-align:left;border-bottom:1px solid var(--border);font-family:'Space Mono',monospace;cursor:pointer;user-select:none;transition:color 0.2s;white-space:nowrap}
+thead th:hover{color:var(--text-secondary)}thead th.sorted{color:var(--accent-green)}
+thead th .sort-arrow{display:inline-block;margin-left:4px;font-size:10px;opacity:0.4}thead th.sorted .sort-arrow{opacity:1}
+tbody tr{border-bottom:1px solid var(--border);transition:background 0.2s}
+tbody tr:hover{background:var(--bg-card-hover)}tbody tr:last-child{border-bottom:none}
+tbody td{padding:14px 16px;font-size:14px;font-weight:500;color:var(--text-primary);white-space:nowrap}
+.pos-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;font-weight:700;font-size:13px;font-family:'Space Mono',monospace}
+.pos-1{background:rgba(245,158,11,0.15);color:#f59e0b}.pos-2{background:rgba(148,163,184,0.15);color:#94a3b8}.pos-3{background:rgba(180,83,9,0.15);color:#d97706}.pos-other{background:rgba(100,116,139,0.08);color:var(--text-muted)}
+.team-name{font-weight:600}.bar-cell{display:flex;align-items:center;gap:8px}
+.mini-bar{height:6px;border-radius:3px;background:var(--accent-green);transition:width 0.6s ease;min-width:2px}
+.mini-bar.gold{background:var(--accent-gold)}.mini-bar.blue{background:var(--accent-blue)}
+.error-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px;transition:background 0.2s}
+.error-card:hover{background:var(--bg-card-hover)}
+.error-icon{width:36px;height:36px;border-radius:10px;background:var(--accent-red-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent-red);font-size:16px}
+.error-info{flex:1}.error-player{font-weight:700;font-size:15px}.error-team{font-size:13px;color:var(--text-muted);margin-top:2px}.error-desc{font-size:13px;color:var(--text-secondary);margin-top:6px;line-height:1.4}
+.participation-highlight{background:linear-gradient(135deg,rgba(34,197,94,0.08),rgba(59,130,246,0.06));border:1px solid rgba(34,197,94,0.15);border-radius:16px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;gap:16px}
+.crown-icon{font-size:32px}.highlight-info .name{font-size:20px;font-weight:800}.highlight-info .stats-line{font-size:14px;color:var(--text-secondary);margin-top:4px}.highlight-info .stats-line span{color:var(--accent-green);font-weight:700}
+.legend{display:flex;gap:18px;padding:0 24px 16px;font-size:12px;color:var(--text-muted)}.legend-item{display:flex;align-items:center;gap:6px}.legend-dot{width:10px;height:10px;border-radius:3px}.legend-dot.gold{background:var(--accent-gold)}.legend-dot.blue{background:var(--accent-blue)}
+footer{text-align:center;padding:48px 0 32px;color:var(--text-muted);font-size:13px}footer .author{font-weight:700;color:var(--text-secondary)}
+@media(max-width:768px){.tabs-container{flex-wrap:wrap}.tab-btn{font-size:12px;padding:10px 12px}.table-wrapper{overflow-x:auto}table{min-width:600px}.stats-row{grid-template-columns:repeat(2,1fr)}.participation-highlight{flex-direction:column;text-align:center}}
+@media(max-width:480px){.stats-row{grid-template-columns:1fr}}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--text-muted);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="header-badge"><span class="pulse"></span> Temporada 2026</div>
+    <h1>Estatísticas do<br><span class="highlight">Futebol Sergipano</span></h1>
+    <p class="subtitle">Acompanhe classificação, artilharia, assistências e participações em gols do Campeonato Sergipano</p>
+  </header>
+  <div class="disclaimer">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span><strong>Aviso:</strong> As estatísticas podem apresentar leves variações em relação aos dados oficiais devido à falta de conteúdo detalhado nas transmissões e à limitada transparência dos clubes na divulgação de informações.</span>
+  </div>
+  <div class="tabs-container">
+    <button class="tab-btn active" data-tab="classificacao">Classificação</button>
+    <button class="tab-btn" data-tab="artilharia">Artilharia</button>
+    <button class="tab-btn" data-tab="assistencias">Assistências</button>
+    <button class="tab-btn" data-tab="participacoes">Participações</button>
+    <button class="tab-btn" data-tab="erros">Erros → Gols</button>
+  </div>
+
+  <div id="classificacao" class="section active">
+    <div class="stats-row" id="classif-stats"></div>
+    <div class="table-wrapper">
+      <div class="table-header"><span class="table-title">📊 Tabela de Classificação</span><input type="text" class="search-box" placeholder="Buscar time..." oninput="filterTable('classif-table',this.value,1)"></div>
+      <div style="overflow-x:auto"><table id="classif-table"><thead><tr>
+        <th data-col="0" data-type="num"># <span class="sort-arrow">▼</span></th>
+        <th data-col="1" data-type="str">Time <span class="sort-arrow">▼</span></th>
+        <th data-col="2" data-type="num">PTS <span class="sort-arrow">▼</span></th>
+        <th data-col="3" data-type="num">J <span class="sort-arrow">▼</span></th>
+        <th data-col="4" data-type="num">V <span class="sort-arrow">▼</span></th>
+        <th data-col="5" data-type="num">E <span class="sort-arrow">▼</span></th>
+        <th data-col="6" data-type="num">D <span class="sort-arrow">▼</span></th>
+        <th data-col="7" data-type="num">GP <span class="sort-arrow">▼</span></th>
+        <th data-col="8" data-type="num">GC <span class="sort-arrow">▼</span></th>
+        <th data-col="9" data-type="num">SG <span class="sort-arrow">▼</span></th>
+        <th>Aprov%</th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+  </div>
+
+  <div id="artilharia" class="section">
+    <div class="stats-row" id="art-stats"></div>
+    <div class="table-wrapper">
+      <div class="table-header"><span class="table-title">⚽ Artilheiros</span><input type="text" class="search-box" placeholder="Buscar jogador ou time..." oninput="filterTable('art-table',this.value)"></div>
+      <div style="overflow-x:auto"><table id="art-table"><thead><tr>
+        <th data-col="0" data-type="num"># <span class="sort-arrow">▼</span></th>
+        <th data-col="1" data-type="str">Jogador <span class="sort-arrow">▼</span></th>
+        <th data-col="2" data-type="str">Time <span class="sort-arrow">▼</span></th>
+        <th data-col="3" data-type="num">Gols <span class="sort-arrow">▼</span></th>
+        <th>Gráfico</th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+  </div>
+
+  <div id="assistencias" class="section">
+    <div class="stats-row" id="ass-stats"></div>
+    <div class="table-wrapper">
+      <div class="table-header"><span class="table-title">🎯 Garçons</span><input type="text" class="search-box" placeholder="Buscar jogador ou time..." oninput="filterTable('ass-table',this.value)"></div>
+      <div style="overflow-x:auto"><table id="ass-table"><thead><tr>
+        <th data-col="0" data-type="num"># <span class="sort-arrow">▼</span></th>
+        <th data-col="1" data-type="str">Jogador <span class="sort-arrow">▼</span></th>
+        <th data-col="2" data-type="str">Time <span class="sort-arrow">▼</span></th>
+        <th data-col="3" data-type="num">Assistências <span class="sort-arrow">▼</span></th>
+        <th>Gráfico</th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+  </div>
+
+  <div id="participacoes" class="section">
+    <div id="part-highlight"></div>
+    <div class="stats-row" id="part-stats"></div>
+    <div class="table-wrapper">
+      <div class="table-header"><span class="table-title">🏆 Participações em Gols (Gols + Assistências)</span><input type="text" class="search-box" placeholder="Buscar jogador..." oninput="filterTable('part-table',this.value)"></div>
+      <div class="legend"><div class="legend-item"><div class="legend-dot gold"></div> Gols</div><div class="legend-item"><div class="legend-dot blue"></div> Assistências</div></div>
+      <div style="overflow-x:auto"><table id="part-table"><thead><tr>
+        <th data-col="0" data-type="num"># <span class="sort-arrow">▼</span></th>
+        <th data-col="1" data-type="str">Jogador <span class="sort-arrow">▼</span></th>
+        <th data-col="2" data-type="str">Time <span class="sort-arrow">▼</span></th>
+        <th data-col="3" data-type="num">Gols <span class="sort-arrow">▼</span></th>
+        <th data-col="4" data-type="num">Assist. <span class="sort-arrow">▼</span></th>
+        <th data-col="5" data-type="num">Total <span class="sort-arrow">▼</span></th>
+        <th>Gráfico</th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+  </div>
+
+  <div id="erros" class="section">
+    <div class="stats-row" id="err-stats"></div>
+    <div id="errors-list"></div>
+  </div>
+
+  <footer>
+    <p>Desenvolvido por <span class="author">seu nome aqui</span></p>
+    <p style="margin-top:6px;font-size:12px;">Campeonato Sergipano 2026 — Dados coletados manualmente via transmissões</p>
+  </footer>
+</div>
+
+<script>
+const classificacao=[
+{pos:1,time:"Sergipe",pts:17,j:7,v:5,e:2,d:0,gp:11,gc:4,sg:7},
+{pos:2,time:"Itabaiana",pts:13,j:7,v:4,e:1,d:2,gp:8,gc:3,sg:5},
+{pos:3,time:"Confiança S.A.F.",pts:11,j:7,v:3,e:2,d:2,gp:8,gc:5,sg:3},
+{pos:4,time:"Guarany",pts:11,j:7,v:3,e:2,d:2,gp:9,gc:8,sg:1},
+{pos:5,time:"América de Propriá",pts:11,j:7,v:2,e:5,d:0,gp:8,gc:5,sg:3},
+{pos:6,time:"Lagarto F.C.",pts:10,j:7,v:2,e:4,d:1,gp:12,gc:7,sg:5},
+{pos:7,time:"Atlético Gloriense",pts:7,j:7,v:2,e:1,d:4,gp:8,gc:11,sg:-3},
+{pos:8,time:"Dorense",pts:7,j:7,v:2,e:1,d:4,gp:8,gc:16,sg:-8},
+{pos:9,time:"Falcon F.C.",pts:5,j:7,v:1,e:2,d:4,gp:5,gc:10,sg:-5},
+{pos:10,time:"Desportiva Aracaju",pts:2,j:7,v:0,e:2,d:5,gp:4,gc:12,sg:-8}
+];
+
+const artilharia=[
+{jogador:"Beto",time:"Atlético Gloriense",gols:3},
+{jogador:"Juliano Fabro",time:"Sergipe",gols:3},
+{jogador:"Rodriguinho",time:"Lagarto F.C.",gols:3},
+{jogador:"Aldair",time:"Dorense",gols:2},
+{jogador:"Andrey",time:"Sergipe",gols:2},
+{jogador:"Bruno",time:"Lagarto F.C.",gols:2},
+{jogador:"Fábio Junior",time:"Atlético Gloriense",gols:2},
+{jogador:"Geovani",time:"Atlético Gloriense",gols:2},
+{jogador:"Jonata",time:"Itabaiana",gols:2},
+{jogador:"Jussimar",time:"Dorense",gols:2},
+{jogador:"Kaio",time:"Guarany",gols:2},
+{jogador:"Lorran",time:"Confiança S.A.F.",gols:2},
+{jogador:"Luan",time:"Itabaiana",gols:2},
+{jogador:"Lucas Bessa",time:"Lagarto F.C.",gols:2},
+{jogador:"Lucas Mineiro",time:"Sergipe",gols:2},
+{jogador:"Luis Henrique",time:"Guarany",gols:2},
+{jogador:"Marlon",time:"Sergipe",gols:2},
+{jogador:"Patrick Torelli",time:"Falcon F.C.",gols:2},
+{jogador:"Wallace Obina",time:"América de Propriá",gols:2},
+{jogador:"Wendel",time:"Confiança S.A.F.",gols:2},
+{jogador:"Biro-Biro",time:"América de Propriá",gols:1},
+{jogador:"Cleriston",time:"Dorense",gols:1},
+{jogador:"Danielzinho",time:"Confiança S.A.F.",gols:1},
+{jogador:"David",time:"Desportiva Aracaju",gols:1},
+{jogador:"Davizinho",time:"Falcon F.C.",gols:1},
+{jogador:"Diego",time:"Dorense",gols:1},
+{jogador:"Diogo",time:"Atlético Gloriense",gols:1},
+{jogador:"Dudu",time:"América de Propriá",gols:1},
+{jogador:"Eder",time:"Desportiva Aracaju",gols:1},
+{jogador:"Elias",time:"América de Propriá",gols:1},
+{jogador:"Erik Gabriel",time:"Lagarto F.C.",gols:1},
+{jogador:"Evinho",time:"Guarany",gols:1},
+{jogador:"Felinto",time:"Guarany",gols:1},
+{jogador:"Gabriel Cardoso",time:"Guarany",gols:1},
+{jogador:"Gean",time:"Atlético Gloriense",gols:1},
+{jogador:"Gionnotti",time:"Lagarto F.C.",gols:1},
+{jogador:"Guilherme Vieira",time:"Lagarto F.C.",gols:1},
+{jogador:"Iago Silva",time:"Confiança S.A.F.",gols:1},
+{jogador:"Ícaro",time:"Confiança S.A.F.",gols:1},
+{jogador:"Igor Reis",time:"Guarany",gols:1},
+{jogador:"Isaque",time:"Itabaiana",gols:1},
+{jogador:"Jair",time:"Itabaiana",gols:1},
+{jogador:"Jefferson Baiano",time:"Lagarto F.C.",gols:1},
+{jogador:"João Guilherme",time:"Guarany",gols:1},
+{jogador:"Leilson",time:"Itabaiana",gols:1},
+{jogador:"Luiz",time:"Desportiva Aracaju",gols:1},
+{jogador:"Maikon Aquino",time:"Confiança S.A.F.",gols:1},
+{jogador:"Matheus Neris",time:"Sergipe",gols:1},
+{jogador:"Paulo",time:"Sergipe",gols:1},
+{jogador:"Pedro",time:"Dorense",gols:1},
+{jogador:"Pedro Ilkson",time:"Desportiva Aracaju",gols:1},
+{jogador:"Railson",time:"Falcon F.C.",gols:1},
+{jogador:"Soares",time:"Lagarto F.C.",gols:1},
+{jogador:"Thierry",time:"Sergipe",gols:1},
+{jogador:"Tiquinho",time:"América de Propriá",gols:1},
+{jogador:"Ueslei",time:"Falcon F.C.",gols:1},
+{jogador:"Vaninho Sergipe",time:"Dorense",gols:1},
+{jogador:"Wesley",time:"América de Propriá",gols:1},
+{jogador:"Yago",time:"Itabaiana",gols:1},
+{jogador:"Yuri Mamute",time:"América de Propriá",gols:1},
+{jogador:"Zé Arthur",time:"Sergipe",gols:1}
+];
+
+const assistencias=[
+{jogador:"Juliano Fabro",time:"Sergipe",assists:4},
+{jogador:"Lucas Bessa",time:"Lagarto F.C.",assists:3},
+{jogador:"Dione",time:"Itabaiana",assists:3},
+{jogador:"Kelvyn",time:"Confiança S.A.F.",assists:3},
+{jogador:"Emanuel",time:"Lagarto F.C.",assists:2},
+{jogador:"Wallace Obina",time:"América de Propriá",assists:2},
+{jogador:"Cleriston",time:"Dorense",assists:2},
+{jogador:"Gionnotti",time:"Lagarto F.C.",assists:2},
+{jogador:"Sem informação",time:"Guarany",assists:1},
+{jogador:"Iago Silva",time:"Confiança S.A.F.",assists:1},
+{jogador:"Igor Gomes",time:"Falcon F.C.",assists:1},
+{jogador:"Bruninho",time:"Lagarto F.C.",assists:1},
+{jogador:"Biro-Biro",time:"América de Propriá",assists:1},
+{jogador:"Fabricio Moura",time:"Dorense",assists:1},
+{jogador:"Cirilo",time:"Dorense",assists:1},
+{jogador:"Aldair",time:"Dorense",assists:1},
+{jogador:"Marquinho",time:"Dorense",assists:1},
+{jogador:"Gabriel Cardoso",time:"Guarany",assists:1},
+{jogador:"Erik Gabriel",time:"Lagarto F.C.",assists:1},
+{jogador:"Paulo Kennidy",time:"Atlético Gloriense",assists:1},
+{jogador:"Felipe dos Anjos",time:"Desportiva Aracaju",assists:1},
+{jogador:"Rodriguinho",time:"Lagarto F.C.",assists:1},
+{jogador:"Kayan",time:"Itabaiana",assists:1},
+{jogador:"Jonathan",time:"Desportiva Aracaju",assists:1},
+{jogador:"Nino Rocha",time:"Atlético Gloriense",assists:1},
+{jogador:"Lucas Mineiro",time:"Sergipe",assists:1},
+{jogador:"Ryan",time:"Guarany",assists:1},
+{jogador:"Tarcísio",time:"Itabaiana",assists:1},
+{jogador:"Zé Arthur",time:"Sergipe",assists:1},
+{jogador:"Fábio Junior",time:"Atlético Gloriense",assists:1},
+{jogador:"Renan",time:"Falcon F.C.",assists:1},
+{jogador:"Timóteo",time:"Atlético Gloriense",assists:1},
+{jogador:"Luan Nascimento",time:"Atlético Gloriense",assists:1},
+{jogador:"Michel (Chuva)",time:"América de Propriá",assists:1},
+{jogador:"Fabricio Oya",time:"Confiança S.A.F.",assists:1},
+{jogador:"Jeferson",time:"Atlético Gloriense",assists:1},
+{jogador:"Weriton",time:"Confiança S.A.F.",assists:1},
+{jogador:"Elimar",time:"Itabaiana",assists:1},
+{jogador:"Denis",time:"Lagarto F.C.",assists:1},
+{jogador:"João Vitor",time:"Desportiva Aracaju",assists:1}
+];
+
+const erros=[
+{jogador:"Bernardo (Goleiro)",time:"Desportiva Aracaju",desc:"Erro na saída de bola resultando em gol"},
+{jogador:"Dadinha",time:"Lagarto F.C.",desc:"Erro no cabeceio do escanteio resultando em gol"},
+{jogador:"Emanoel",time:"Lagarto F.C.",desc:"Erro ao tentar chutão com bola quicando"},
+{jogador:"Leozão",time:"Lagarto F.C.",desc:"Erro ao cortar bola cruzada rasteira"},
+{jogador:"Jogador Def. Esquerdo",time:"Desportiva Aracaju",desc:"Erro na proteção da bola (sem informação na transmissão)"},
+{jogador:"Bernardo (Goleiro)",time:"Desportiva Aracaju",desc:"Erro ao tentar socar bola cruzada na área"},
+{jogador:"Carioca",time:"Sergipe",desc:"Erro ao dividir com atacante, resultando em pênalti"},
+{jogador:"José Vitor (Goleiro)",time:"Dorense",desc:"Erro ao dividir com atacante, resultando em pênalti"},
+{jogador:"Mandovani",time:"Confiança S.A.F.",desc:"Erro ao tentar cortar bola cruzada na área"}
+];
+
+// ===== RENDER =====
+function renderClassificacao(){
+  const totalGols=classificacao.reduce((s,t)=>s+t.gp,0);
+  const bestAtk=classificacao.reduce((b,t)=>t.gp>b.gp?t:b);
+  const inv=classificacao.filter(t=>t.d===0);
+  document.getElementById('classif-stats').innerHTML=`
+    <div class="stat-card green"><div class="label">Líder</div><div class="value">${classificacao[0].time}</div><div class="detail">${classificacao[0].pts} pontos em ${classificacao[0].j} jogos</div></div>
+    <div class="stat-card gold"><div class="label">Total de Gols</div><div class="value">${Math.floor(totalGols/2)}</div><div class="detail">Média de ${(totalGols/2/classificacao[0].j).toFixed(1)} gols/jogo</div></div>
+    <div class="stat-card blue"><div class="label">Maior Ataque</div><div class="value">${bestAtk.gp}</div><div class="detail">${bestAtk.time}</div></div>
+    <div class="stat-card red"><div class="label">Invictos</div><div class="value">${inv.length}</div><div class="detail">${inv.map(t=>t.time).join(', ')||'Nenhum'}</div></div>`;
+  document.querySelector('#classif-table tbody').innerHTML=classificacao.map(t=>{
+    const ap=t.j>0?((t.pts/(t.j*3))*100).toFixed(0):0;
+    const pc=t.pos<=3?`pos-${t.pos}`:'pos-other';
+    return `<tr><td><span class="pos-badge ${pc}">${t.pos}</span></td><td class="team-name">${t.time}</td><td style="font-weight:700">${t.pts}</td><td>${t.j}</td><td>${t.v}</td><td>${t.e}</td><td>${t.d}</td><td>${t.gp}</td><td>${t.gc}</td><td style="color:${t.sg>0?'var(--accent-green)':t.sg<0?'var(--accent-red)':'var(--text-secondary)'};font-weight:700">${t.sg>0?'+':''}${t.sg}</td><td><div class="bar-cell"><div class="mini-bar" style="width:${(ap/100)*80}px"></div><span style="font-size:13px;color:var(--text-secondary)">${ap}%</span></div></td></tr>`;
+  }).join('');
+}
+
+function renderArtilharia(){
+  const sorted=[...artilharia].sort((a,b)=>b.gols-a.gols||a.jogador.localeCompare(b.jogador));
+  const mx=Math.max(...sorted.map(a=>a.gols));
+  const tot=sorted.reduce((s,a)=>s+a.gols,0);
+  const top3=sorted.filter(a=>a.gols===sorted[0].gols);
+  const teams=[...new Set(sorted.map(a=>a.time))].length;
+  document.getElementById('art-stats').innerHTML=`
+    <div class="stat-card gold"><div class="label">Artilheiro(s)</div><div class="value">${top3.map(a=>a.jogador).join(', ')}</div><div class="detail">${top3[0].gols} gols cada</div></div>
+    <div class="stat-card green"><div class="label">Total de Gols</div><div class="value">${tot}</div><div class="detail">${sorted.length} jogadores marcaram</div></div>
+    <div class="stat-card blue"><div class="label">Times c/ Gol</div><div class="value">${teams}</div><div class="detail">de ${classificacao.length} times</div></div>`;
+  document.querySelector('#art-table tbody').innerHTML=sorted.map((a,i)=>{
+    const pc=i<3?`pos-${i+1}`:'pos-other';
+    return `<tr><td><span class="pos-badge ${pc}">${i+1}</span></td><td class="team-name">${a.jogador}</td><td>${a.time}</td><td style="font-weight:700">${a.gols}</td><td><div class="bar-cell"><div class="mini-bar gold" style="width:${(a.gols/mx)*100}px"></div></div></td></tr>`;
+  }).join('');
+}
+
+function renderAssistencias(){
+  const sorted=[...assistencias].sort((a,b)=>b.assists-a.assists||a.jogador.localeCompare(b.jogador));
+  const mx=Math.max(...sorted.map(a=>a.assists));
+  const tot=sorted.reduce((s,a)=>s+a.assists,0);
+  document.getElementById('ass-stats').innerHTML=`
+    <div class="stat-card blue"><div class="label">Líder de Assistências</div><div class="value">${sorted[0].jogador}</div><div class="detail">${sorted[0].assists} assistências — ${sorted[0].time}</div></div>
+    <div class="stat-card green"><div class="label">Total Assistências</div><div class="value">${tot}</div><div class="detail">${sorted.length} garçons</div></div>`;
+  document.querySelector('#ass-table tbody').innerHTML=sorted.map((a,i)=>{
+    const pc=i<3?`pos-${i+1}`:'pos-other';
+    return `<tr><td><span class="pos-badge ${pc}">${i+1}</span></td><td class="team-name">${a.jogador}</td><td>${a.time}</td><td style="font-weight:700">${a.assists}</td><td><div class="bar-cell"><div class="mini-bar blue" style="width:${(a.assists/mx)*100}px"></div></div></td></tr>`;
+  }).join('');
+}
+
+function renderParticipacoes(){
+  const map={};
+  artilharia.forEach(a=>{const k=a.jogador.toLowerCase().trim();if(!map[k])map[k]={jogador:a.jogador,time:a.time,gols:0,assists:0};map[k].gols+=a.gols;});
+  assistencias.forEach(a=>{const k=a.jogador.toLowerCase().trim();if(!map[k])map[k]={jogador:a.jogador,time:a.time,gols:0,assists:0};map[k].assists+=a.assists;});
+  const list=Object.values(map).map(p=>({...p,total:p.gols+p.assists}));
+  list.sort((a,b)=>b.total-a.total||b.gols-a.gols||a.jogador.localeCompare(b.jogador));
+  const mx=Math.max(...list.map(p=>p.total));
+  const top=list[0];
+  document.getElementById('part-highlight').innerHTML=`<div class="participation-highlight"><div class="crown-icon">👑</div><div class="highlight-info"><div class="name">${top.jogador}</div><div class="stats-line"><span>${top.gols} gols</span> + <span>${top.assists} assistências</span> = <span>${top.total} participações diretas</span> — ${top.time}</div></div></div>`;
+  const wb=list.filter(p=>p.gols>0&&p.assists>0).length;
+  document.getElementById('part-stats').innerHTML=`
+    <div class="stat-card green"><div class="label">Maior Participação</div><div class="value">${top.total}</div><div class="detail">${top.jogador}</div></div>
+    <div class="stat-card gold"><div class="label">Gols + Assists</div><div class="value">${wb}</div><div class="detail">Jogadores com gols E assistências</div></div>
+    <div class="stat-card blue"><div class="label">Total Jogadores</div><div class="value">${list.length}</div><div class="detail">Com participação direta em gols</div></div>`;
+  document.querySelector('#part-table tbody').innerHTML=list.map((p,i)=>{
+    const pc=i<3?`pos-${i+1}`:'pos-other';
+    const gW=mx>0?(p.gols/mx)*100:0;const aW=mx>0?(p.assists/mx)*100:0;
+    return `<tr><td><span class="pos-badge ${pc}">${i+1}</span></td><td class="team-name">${p.jogador}</td><td>${p.time}</td><td style="font-weight:600">${p.gols}</td><td style="font-weight:600">${p.assists}</td><td style="font-weight:800;color:var(--accent-green)">${p.total}</td><td><div class="bar-cell"><div class="mini-bar gold" style="width:${gW}px" title="${p.gols} gols"></div><div class="mini-bar blue" style="width:${aW}px" title="${p.assists} assists"></div></div></td></tr>`;
+  }).join('');
+}
+
+function renderErros(){
+  const te={};erros.forEach(e=>{te[e.time]=(te[e.time]||0)+1;});
+  const w=Object.entries(te).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('err-stats').innerHTML=`
+    <div class="stat-card red"><div class="label">Total de Erros</div><div class="value">${erros.length}</div><div class="detail">Erros que resultaram em gol</div></div>
+    <div class="stat-card gold"><div class="label">Mais Erros</div><div class="value">${w?w[0]:'-'}</div><div class="detail">${w?w[1]+' erros':''}</div></div>`;
+  document.getElementById('errors-list').innerHTML=erros.map(e=>`<div class="error-card"><div class="error-icon">⚠</div><div class="error-info"><div class="error-player">${e.jogador}</div><div class="error-team">${e.time}</div><div class="error-desc">${e.desc}</div></div></div>`).join('');
+}
+
+// TABS
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    btn.classList.add('active');
+  });
+});
+
+// SORT
+document.querySelectorAll('thead th[data-col]').forEach(th=>{
+  th.addEventListener('click',()=>{
+    const table=th.closest('table'),tbody=table.querySelector('tbody');
+    const rows=Array.from(tbody.querySelectorAll('tr'));
+    const col=parseInt(th.dataset.col),type=th.dataset.type;
+    const isAsc=th.classList.contains('sorted')&&th.dataset.dir==='asc';
+    table.querySelectorAll('thead th').forEach(h=>{h.classList.remove('sorted');h.dataset.dir='';});
+    th.classList.add('sorted');th.dataset.dir=isAsc?'desc':'asc';
+    rows.sort((a,b)=>{
+      let va=a.cells[col].textContent.trim(),vb=b.cells[col].textContent.trim();
+      if(type==='num'){va=parseFloat(va)||0;vb=parseFloat(vb)||0;}else{va=va.toLowerCase();vb=vb.toLowerCase();}
+      if(va<vb)return isAsc?1:-1;if(va>vb)return isAsc?-1:1;return 0;
+    });
+    rows.forEach(r=>tbody.appendChild(r));
+  });
+});
+
+// FILTER
+function filterTable(tid,q,sc=1){
+  document.getElementById(tid).querySelectorAll('tbody tr').forEach(r=>{
+    const t=Array.from(r.cells).slice(sc,sc+2).map(c=>c.textContent.toLowerCase()).join(' ');
+    r.style.display=t.includes(q.toLowerCase())?'':'none';
+  });
+}
+
+// INIT
+renderClassificacao();renderArtilharia();renderAssistencias();renderParticipacoes();renderErros();
+</script>
+</body>
+</html>
